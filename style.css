@@ -11,6 +11,10 @@ body {
     text-align: center;
 }
 
+header {
+    color: #A68E3B;
+}
+
 .footer {
     padding: 20px;
     font-size: 12px;
