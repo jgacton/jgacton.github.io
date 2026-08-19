@@ -1,78 +1,533 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Syne">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel = "icon" type = "image/png" href = "./images/favicon.png" style="width:64px;height:64px;"/>
-  
-  <title>J. G. Acton</title>
-      
-  <style>
-    body {
-      font-family: 'Syne', sans-serif; 
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Joshua Acton</title>
+<meta name="description" content="Joshua Acton — FX derivatives structurer, London." />
+
+<link rel="icon" type="image/png" href="./images/favicon.png" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Joshua Acton" />
+<meta property="og:description" content="FX derivatives structurer, London." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://jgacton.github.io" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet" />
+
+<script>
+  // Set the theme before first paint so there's no white flash on load in dark-mode.
+  (function () {
+    try {
+      var stored = localStorage.getItem('theme');
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'light');
     }
-    
-    .container {
-      width: 100%;
-      padding-right: 15px;
-      padding-left: 15px;
-      margin-right: auto;
-      margin-left: auto;
-    }
-    
-    .image-container {
-      text-align: center;
-      width: 100%;
-      margin-top: 20px;
-    }
-    
-    .links-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-    }
-      
-  </style>
+  })();
+</script>
+
+<style>
+/* ─────────────────────────────────────────────
+   Tokens
+   ───────────────────────────────────────────── */
+:root[data-theme='light'] {
+  --bg:        #fbfbfa;
+  --bg-panel:  #f6f6f4;
+  --text:      #16181a;
+  --text-mid:  #4a4f54;
+  --muted:     #83888d;
+  --line:      #e6e6e2;
+  --wash:      rgba(22, 24, 26, 0.045);
+  --accent:    #2d4b9a;
+}
+
+:root[data-theme='dark'] {
+  --bg:        #0c0c0d;
+  --bg-panel:  #101012;
+  --text:      #ededec;
+  --text-mid:  #b4b8bc;
+  --muted:     #7c8085;
+  --line:      #222326;
+  --wash:      rgba(255, 255, 255, 0.055);
+  --accent:    #8ba6ea;
+}
+:root {
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sidebar-w: 268px;
+  --pad: 28px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv05' 1, 'ss01' 1;
+}
+
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   Layout
+   ───────────────────────────────────────────── */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ── Sidebar ────────────────────────────────── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--line);
+  padding: var(--pad) 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  scrollbar-width: thin;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 8px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--wash);
+}
+
+.identity-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.011em;
+}
+
+.identity-role {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.nav-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 8px;
+  margin-bottom: 9px;
+}
+
+.nav-item {
+  display: block;
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: var(--text-mid);
+  transition: background 0.13s ease, color 0.13s ease;
+}
+
+.nav-item:hover { background: var(--wash); color: var(--text); }
+
+.nav-item[aria-current='true'] {
+  background: var(--wash);
+  color: var(--text);
+}
+
+.nav-item-title { display: block; font-size: 13.5px; font-weight: 450; }
+
+.nav-item-desc {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.nav-external .nav-item-title::after {
+  content: '↗';
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: 5px;
+  vertical-align: 1px;
+}
+
+.sidebar-foot { margin-top: auto; padding: 14px 8px 0; border-top: 1px solid var(--line); }
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: 0;
+  padding: 5px 6px;
+  margin: -5px -6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.13s ease, color 0.13s ease;
+}
+.theme-toggle:hover { background: var(--wash); color: var(--text); }
+
+/* ── Content ────────────────────────────────── */
+.content {
+  padding: 76px var(--pad) 120px;
+}
+
+.column { max-width: 570px; margin: 0 auto; }
+
+.section { scroll-margin-top: 40px; }
+.section + .section { margin-top: 62px; }
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 18px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lede h2 {
+  margin: 0 0 4px;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.021em;
+}
+
+.lede-role {
+  margin: 0 0 22px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.prose p {
+  margin: 0 0 13px;
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--text-mid);
+}
+.prose p:last-child { margin-bottom: 0; }
+.prose strong { color: var(--text); font-weight: 500; }
+
+.prose a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2.5px;
+  transition: text-decoration-color 0.13s ease;
+}
+.prose a:hover { text-decoration-color: var(--accent); }
+
+/* ── Entry list — the mono meta column is the signature ── */
+.entries { display: flex; flex-direction: column; gap: 1px; }
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: 11px 10px;
+  margin: 0 -10px;
+  border-radius: 7px;
+  transition: background 0.13s ease;
+}
+
+.entry:hover { background: var(--wash); }
+
+.entry-title {
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: -0.008em;
+}
+
+.entry-desc {
+  display: block;
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-top: 2px;
+  line-height: 1.45;
+}
+
+.entry-meta {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 0.13s ease;
+}
+
+.entry:hover .entry-meta { color: var(--accent); }
+
+.section-more {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 13.5px;
+  color: var(--muted);
+  transition: color 0.13s ease;
+}
+.section-more:hover { color: var(--text); }
+.section-more::after { content: ' →'; }
+
+.colophon {
+  margin-top: 78px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ─────────────────────────────────────────────
+   Responsive — sidebar unpins and stacks
+   ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 22px 20px;
+    gap: 20px;
+  }
+
+  .sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
+  }
+
+  .nav-item-desc { display: none; }
+  .sidebar-foot { margin-top: 0; }
+  .content { padding: 44px 20px 88px; }
+  .section + .section { margin-top: 50px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}
+
+html { scroll-behavior: smooth; }
+</style>
 </head>
-  
+
 <body>
-  <!-- Image and name container. Change to your picture here. -->
-  <div class="image-container">
-    <img src="/images/Mugshot-2024-small.jpg" alt="Profile-photo" max-width="100%" height="150px" style="border-radius: 50%;">
+<div class="layout">
 
-    <!-- Content. Add your bio here. -->
-    <h2><strong>Joshua G. Acton</strong></h2>
-    <p>
-      FX Options Trading Analyst at Morgan Stanley<br>
-    </p>
-  </div>
-
-  <!-- Links section -->
-  <div class="links-container">
-    <a href="https://www.linkedin.com/in/jgacton/" class="w3-button w3-hover-blue w3-large w3-black" style="width: 350px;" target="_blank"></i>LinkedIn</a>
-    <a href="https://github.com/jgacton" class="w3-button w3-hover-blue w3-large w3-black" style="width: 350px;" target="_blank"></i>Github</a>
-  </div>
-
-    <!-- Contact Section -->
-  <div class="w3-container w3-content" style="max-width:390px" id="contact">
-    <div class="w3-row w3-padding-32">
-      <div class="w3-col m12 w3-large w3-margin-bottom">
-        <i class="fa fa-map-marker" style="width:30px"></i>London, UK<br>
-        <i class="fa fa-envelope" style="width:30px"></i>Email: jgacton@protonmail.com<br>
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="sidebar">
+    <div class="identity">
+      <img class="avatar" src="./images/Mugshot-2024-small.jpg" alt="" />
+      <div>
+        <p class="identity-name">Joshua Acton</p>
+        <p class="identity-role">FX Derivatives Structurer</p>
       </div>
     </div>
-  
-    <footer class="footer">
-    </footer>
-  </div>
-  
-</body>  
+
+    <div class="sidebar-nav">
+      <nav class="nav-group" aria-label="Sections">
+        <span class="nav-label">Index</span>
+        <a class="nav-item" href="#about" data-nav>
+          <span class="nav-item-title">About</span>
+          <span class="nav-item-desc">Who I am, what I do</span>
+        </a>
+        <a class="nav-item" href="#writing" data-nav>
+          <span class="nav-item-title">Writing</span>
+          <span class="nav-item-desc">Notes and essays</span>
+        </a>
+        <a class="nav-item" href="#projects" data-nav>
+          <span class="nav-item-title">Projects</span>
+          <span class="nav-item-desc">Things I've built</span>
+        </a>
+        <a class="nav-item" href="#now" data-nav>
+          <span class="nav-item-title">Now</span>
+          <span class="nav-item-desc">What I'm up to</span>
+        </a>
+      </nav>
+
+      <nav class="nav-group nav-external" aria-label="Elsewhere">
+        <span class="nav-label">Elsewhere</span>
+        <a class="nav-item" href="https://github.com/jgacton" target="_blank" rel="noopener">
+          <span class="nav-item-title">GitHub</span>
+        </a>
+        <a class="nav-item" href="https://www.linkedin.com/in/jgacton/" target="_blank" rel="noopener">
+          <span class="nav-item-title">LinkedIn</span>
+        </a>
+        <a class="nav-item" href="mailto:jgacton@protonmail.com">
+          <span class="nav-item-title">Email</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-foot">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch colour theme">
+        <span id="theme-icon">◐</span><span id="theme-name">Light</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════ CONTENT ══════════ -->
+  <main class="content">
+    <div class="column">
+
+      <section class="section lede" id="about">
+        <h2>Joshua Acton</h2>
+        <p class="lede-role">FX Derivatives Structurer · London</p>
+        <div class="prose">
+          <p>In my day job I structure and execute trades with a variety of clients across the FX derivatives market.</p>
+          <p>Outside of work, as well as staying fit and healthy, I write code, read widely, edit Wikipedia articles, and generally find it hard to focus on one thing at a time.</p>
+          <p>This is where I document my projects, self publish my thoughts, and hold myself accountable.</p>
+          <p>Nothing here represents the views of my employer.</p>
+        </div>
+      </section>
+
+      <section class="section" id="writing">
+        <h3 class="section-label">Writing</h3>
+        <div class="entries">
+          <a class="entry" href="./writing/superintelligence.html">
+            <span>
+              <span class="entry-title">Will machine superintelligence benefit humanity?</span>
+              <span class="entry-desc">An essay I wrote in 2021, two years before most people had spoken to a language model. Republished with a note on what it got wrong.</span>
+            </span>
+            <span class="entry-meta">May 2021</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" id="projects">
+        <h3 class="section-label">Projects</h3>
+        <div class="entries">
+          <a class="entry" href="https://github.com/jgacton/jgacton" target="_blank" rel="noopener">
+            <span>
+              <span class="entry-title">This site</span>
+              <span class="entry-desc">Static HTML and CSS, hosted on GitHub Pages.</span>
+            </span>
+            <span class="entry-meta">HTML</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" id="now">
+        <h3 class="section-label">Now</h3>
+        <div class="prose">
+          <p>Coding: Minerva, a tool to help high-earning UK professionals understand their finances.</p>
+          <p>Reading: Impossible Journeys - Matthew Lyons</p>
+        </div>
+      </section>
+
+      <div class="colophon">
+        <span>London, UK</span>
+        <span>jgacton@protonmail.com</span>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<script>
+(function () {
+  /* ── Theme toggle ─────────────────────────── */
+  var root = document.documentElement;
+  var btn  = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  var name = document.getElementById('theme-name');
+
+  function paint() {
+    var dark = root.getAttribute('data-theme') === 'dark';
+    icon.textContent = dark ? '◑' : '◐';
+    name.textContent = dark ? 'Dark' : 'Light';
+  }
+  paint();
+
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+
+  /* ── Scrollspy — highlights the current section in the sidebar ── */
+  var links = Array.prototype.slice.call(document.querySelectorAll('[data-nav]'));
+  var sections = links
+    .map(function (l) { return document.querySelector(l.getAttribute('href')); })
+    .filter(Boolean);
+
+  if ('IntersectionObserver' in window && sections.length) {
+    var visible = new Set();
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) visible.add(e.target.id);
+        else visible.delete(e.target.id);
+      });
+
+      var current = null;
+      for (var i = 0; i < sections.length; i++) {
+        if (visible.has(sections[i].id)) { current = sections[i].id; break; }
+      }
+
+      links.forEach(function (l) {
+        var on = l.getAttribute('href') === '#' + current;
+        if (on) l.setAttribute('aria-current', 'true');
+        else l.removeAttribute('aria-current');
+      });
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+  }
+})();
+</script>
+</body>
 </html>
-  

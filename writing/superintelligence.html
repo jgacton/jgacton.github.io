@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>Would artificial superintelligence benefit humanity?</title>
+<meta content="An extended essay on the risks and benefits of artificial superintelligence, written in 2021 and republished with a retrospective note." name="description"/>
+<link href="/images/favicon.png" rel="icon" type="image/png"/>
+<meta content="Would artificial superintelligence benefit humanity?" property="og:title"/>
+<meta content="An extended essay written in 2021, republished with a note on what it got wrong." property="og:description"/>
+<meta content="article" property="og:type"/>
+<meta content="2021-06-01" property="article:published_time"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Inter:wght@400;450;500;600&amp;display=swap" rel="stylesheet"/>
+<script>
+  (function () {
+    try {
+      var stored = localStorage.getItem('theme');
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  })();
+</script>
+<style>
+/* ─────────────────────────────────────────────
+   Tokens — identical to index.html
+   ───────────────────────────────────────────── */
+:root[data-theme='light'] {
+  --bg:        #fbfbfa;
+  --bg-panel:  #f6f6f4;
+  --text:      #16181a;
+  --text-mid:  #4a4f54;
+  --muted:     #83888d;
+  --line:      #e6e6e2;
+  --wash:      rgba(22, 24, 26, 0.045);
+  --accent:    #2d4b9a;
+}
+
+:root[data-theme='dark'] {
+  --bg:        #0c0c0d;
+  --bg-panel:  #101012;
+  --text:      #ededec;
+  --text-mid:  #b4b8bc;
+  --muted:     #7c8085;
+  --line:      #222326;
+  --wash:      rgba(255, 255, 255, 0.055);
+  --accent:    #8ba6ea;
+}
+
+:root {
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sidebar-w: 268px;
+  --pad: 28px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Layout + sidebar — identical to index.html ── */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--line);
+  padding: var(--pad) 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  scrollbar-width: thin;
+}
+
+.identity { display: flex; align-items: center; gap: 11px; padding: 0 8px; }
+
+.avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--wash);
+}
+
+.identity-name { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.011em; }
+.identity-role { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+
+.nav-group { display: flex; flex-direction: column; gap: 1px; }
+
+.nav-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 8px;
+  margin-bottom: 9px;
+}
+
+.nav-item {
+  display: block;
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: var(--text-mid);
+  transition: background 0.13s ease, color 0.13s ease;
+}
+.nav-item:hover { background: var(--wash); color: var(--text); }
+.nav-item[aria-current='true'] { background: var(--wash); color: var(--text); }
+
+.nav-item-title { display: block; font-size: 13.5px; font-weight: 450; }
+.nav-item-desc { display: block; font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+.nav-external .nav-item-title::after {
+  content: '↗';
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: 5px;
+  vertical-align: 1px;
+}
+
+.sidebar-foot { margin-top: auto; padding: 14px 8px 0; border-top: 1px solid var(--line); }
+
+.theme-toggle {
+  display: flex; align-items: center; gap: 7px;
+  background: none; border: 0;
+  padding: 5px 6px; margin: -5px -6px;
+  border-radius: 6px; cursor: pointer;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.13s ease, color 0.13s ease;
+}
+.theme-toggle:hover { background: var(--wash); color: var(--text); }
+
+/* ─────────────────────────────────────────────
+   Article
+   ───────────────────────────────────────────── */
+.content { padding: 76px var(--pad) 140px; }
+.column { max-width: 640px; margin: 0 auto; }
+
+.backlink {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 44px;
+  transition: color 0.13s ease;
+}
+.backlink:hover { color: var(--text); }
+.backlink::before { content: '← '; }
+
+.article-head { margin-bottom: 40px; }
+
+.article-title {
+  margin: 0 0 14px;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.026em;
+}
+
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+/* ── The retrospective note — the signature block of this page ── */
+.retro {
+  margin: 0 0 44px;
+  padding: 20px 22px;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+.retro-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 11px;
+}
+
+.retro p {
+  margin: 0 0 11px;
+  font-size: 14.5px;
+  line-height: 1.62;
+  color: var(--text-mid);
+}
+.retro p:last-child { margin-bottom: 0; }
+
+/* ── Body copy ── */
+.body { font-size: 16px; line-height: 1.72; color: var(--text-mid); }
+
+.body p { margin: 0 0 20px; }
+
+.body h2 {
+  margin: 46px 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.016em;
+  color: var(--text);
+}
+
+.body h3 {
+  margin: 32px 0 12px;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.body strong { color: var(--text); font-weight: 550; }
+
+.body a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2.5px;
+  transition: text-decoration-color 0.13s ease;
+}
+.body a:hover { text-decoration-color: var(--accent); }
+
+.body ul, .body ol { margin: 0 0 20px; padding-left: 22px; }
+.body li { margin-bottom: 7px; }
+
+.body blockquote {
+  margin: 26px 0;
+  padding-left: 20px;
+  border-left: 2px solid var(--line);
+  color: var(--muted);
+  font-style: italic;
+}
+.body blockquote p:last-child { margin-bottom: 0; }
+
+/* ── Figures: diagrams, charts, scans ── */
+.body figure { margin: 34px 0; }
+
+.body figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: #fff; /* a white-background diagram then reads as an intentional card in dark mode */
+}
+
+/* Opt in for clean line diagrams — flips them properly instead of caging them on white */
+:root[data-theme='dark'] .body figure img.invert-on-dark {
+  filter: invert(1) hue-rotate(180deg);
+  background: transparent;
+}
+
+/* Photographs shouldn't get the white card treatment */
+.body figure img.photo { background: transparent; }
+
+.body figcaption {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.body figcaption .fig-num { color: var(--accent); margin-right: 8px; }
+
+/* Let a dense diagram break the text measure a little */
+.body figure.wide { width: calc(100% + 120px); margin-left: -60px; }
+
+/* ── Tables ── */
+.table-wrap {
+  margin: 32px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.body thead th {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--muted);
+  text-align: left;
+  white-space: nowrap;
+  padding: 0 16px 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.body tbody td {
+  padding: 9px 16px 9px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-mid);
+  vertical-align: top;
+}
+
+.body tbody tr:last-child td { border-bottom: 0; }
+
+.body th.num, .body td.num { text-align: right; padding-right: 0; }
+
+.body .table-caption {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* Footnote references — an EPQ will have plenty */
+.fn-ref {
+  font-family: var(--mono);
+  font-size: 11px;
+  vertical-align: super;
+  line-height: 0;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 0 1px;
+}
+.fn-ref:hover { text-decoration: underline; }
+
+.footnotes {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.footnotes-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.footnotes ol { margin: 0; padding-left: 20px; }
+
+.footnotes li {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin-bottom: 9px;
+  scroll-margin-top: 30px;
+}
+
+.footnotes a { color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); }
+.footnotes a:hover { color: var(--text); }
+
+.article-foot {
+  margin-top: 56px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.article-foot a { transition: color 0.13s ease; }
+.article-foot a:hover { color: var(--text); }
+
+
+/* ── Heading level 4 ── */
+.body h4 {
+  margin: 34px 0 12px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* ── Contents ── */
+.toc {
+  margin: 0 0 44px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+.toc-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.toc ol { margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+
+.toc > ol > li { margin-bottom: 5px; }
+
+.toc a {
+  color: var(--text-mid);
+  font-size: 13.5px;
+  transition: color 0.13s ease;
+}
+.toc a:hover { color: var(--accent); }
+
+.toc ol ol { margin: 4px 0 8px 16px; }
+.toc ol ol li { margin-bottom: 3px; }
+.toc ol ol a { font-size: 13px; color: var(--muted); }
+
+/* ── Per-section notes ── */
+.section-notes {
+  margin: 34px 0 12px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+
+.section-notes-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 11px;
+}
+
+.section-notes ol { margin: 0; padding: 0; list-style: none; }
+
+.section-notes li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: baseline;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-bottom: 5px;
+  scroll-margin-top: 30px;
+}
+
+.section-notes .fn-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  transition: color 0.13s ease;
+}
+
+.section-notes .fn-body a {
+  color: var(--muted);
+  text-decoration: none;
+  padding-left: 2px;
+}
+.section-notes .fn-body a:hover { color: var(--text); }
+
+/* jumped-to note lights up so you can find it */
+.section-notes li:target { color: var(--text); }
+.section-notes li:target .fn-num { color: var(--accent); font-weight: 500; }
+
+/* ── Bibliography ── */
+.footnotes ul.bib { margin: 0; padding: 0; list-style: none; }
+
+.footnotes ul.bib li {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin-bottom: 12px;
+  padding-left: 20px;
+  text-indent: -20px;   /* hanging indent, as a bibliography should have */
+}
+
+.footnotes ul.bib a { word-break: break-word; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 22px 20px;
+    gap: 20px;
+  }
+
+  .sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
+  }
+
+  .nav-item-desc { display: none; }
+  .sidebar-foot { margin-top: 0; }
+
+  .content { padding: 40px 20px 96px; }
+  .backlink { margin-bottom: 30px; }
+  .article-title { font-size: 25px; }
+  .body { font-size: 15.5px; }
+  .body figure.wide { width: 100%; margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<!-- ══════════ SIDEBAR — keep in sync with index.html ══════════ -->
+<aside class="sidebar">
+<div class="identity">
+<img alt="" class="avatar" src="/images/Mugshot-2024-small.jpg"/>
+<div>
+<p class="identity-name"><a href="/">Joshua Acton</a></p>
+<p class="identity-role">FX Derivatives Structurer</p>
+</div>
+</div>
+<div class="sidebar-nav">
+<nav aria-label="Sections" class="nav-group">
+<span class="nav-label">Index</span>
+<a class="nav-item" href="/#about">
+<span class="nav-item-title">About</span>
+<span class="nav-item-desc">Who I am, what I do</span>
+</a>
+<a aria-current="true" class="nav-item" href="/#writing">
+<span class="nav-item-title">Writing</span>
+<span class="nav-item-desc">Notes and essays</span>
+</a>
+<a class="nav-item" href="/#projects">
+<span class="nav-item-title">Projects</span>
+<span class="nav-item-desc">Things I've built</span>
+</a>
+<a class="nav-item" href="/#now">
+<span class="nav-item-title">Now</span>
+<span class="nav-item-desc">What I'm up to</span>
+</a>
+</nav>
+<nav aria-label="Elsewhere" class="nav-group nav-external">
+<span class="nav-label">Elsewhere</span>
+<a class="nav-item" href="https://github.com/jgacton" rel="noopener" target="_blank">
+<span class="nav-item-title">GitHub</span>
+</a>
+<a class="nav-item" href="https://www.linkedin.com/in/jgacton/" rel="noopener" target="_blank">
+<span class="nav-item-title">LinkedIn</span>
+</a>
+<a class="nav-item" href="mailto:jgacton@protonmail.com">
+<span class="nav-item-title">Email</span>
+</a>
+</nav>
+</div>
+<div class="sidebar-foot">
+<button aria-label="Switch colour theme" class="theme-toggle" id="theme-toggle" type="button">
+<span id="theme-icon">◐</span><span id="theme-name">Light</span>
+</button>
+</div>
+</aside>
+<!-- ══════════ ARTICLE ══════════ -->
+<main class="content">
+<article class="column">
+<a class="backlink" href="/">Joshua Acton</a>
+<header class="article-head">
+<h1 class="article-title">Will machine superintelligence benefit humanity?</h1>
+<!-- Provenance lives here, not in the title. Adjust the mark/date as you like. -->
+<div class="article-meta">
+<span>May 2021</span>
+<!--<span>Extended Project Qualification</span>
+<span>50/50</span>
+<span>6,700 words</span>-->
+</div>
+</header>
+<!--
+        ════════════════════════════════════════════════════════════
+        THE RETROSPECTIVE NOTE. Write this yourself — 300–500 words.
+        Three things worth covering:
+          1. What you were reading and thinking in 2021, and why.
+          2. One thing the essay got right that felt speculative then.
+          3. One thing it got wrong, stated plainly. This is the part
+             that earns the reader's trust — don't soften it.
+        The text below is a sketch of the shape, not your words.
+        ════════════════════════════════════════════════════════════
+      -->
+<aside class="retro">
+<span class="retro-label">Note, August 2026</span>
+<p>I wrote this in 2020-21, for an A-Level Extended Project Qualification. ChatGPT was first released to the public in November 2022. I've republished it as written, without corrections.</p>
+<p>Some of it holds up better than I expected. For example, that the AI race would be dipolar at the international level, that there would be a focus on using AI to develop better AI, and that AI development would be spearheaded by those with a profit motive.</p> 
+<p>Other parts don't. Although I mentioned GPT-3, I did not anticipate the speed of progress in large language models, the extent to which they would become ubiquitous, or the applicability of the transformer/LLM architecture to problems other than text generation.</p>
+<p>Five years on, I am both amazed by the capabilities of the tools available to me as a consumer, and uneasy about the rapid pace of change.</p>
+<p>There are many more questions that I have now, that I could not have conceived when I wrote the original essay. Is next-token prediction enough for AGI? If so can that architecture extend to ASI? Is it possible to make a generative model "provably safe"?</p>
+</aside>
+<nav aria-label="Contents" class="toc">
+<span class="toc-label">Contents</span>
+<ol>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#intelligence-and-ai">Intelligence and AI</a>
+<ol>
+<li><a href="#what-is-intelligence">What is intelligence?</a></li>
+<li><a href="#what-is-ai">What is AI?</a></li>
+</ol>
+</li>
+<li><a href="#machine-superintelligence">Machine superintelligence</a>
+<ol>
+<li><a href="#what-is-superintelligence">What is superintelligence?</a></li>
+<li><a href="#existential-risk">Existential risk</a></li>
+<li><a href="#humanity-s-cosmic-endowment">Humanity's cosmic endowment</a></li>
+</ol>
+</li>
+<li><a href="#conclusions">Conclusions</a></li>
+<li><a href="#bibliography">Bibliography</a></li>
+</ol>
+</nav>
+<!--
+        ════════════════════════════════════════════════════════════
+        ESSAY BODY. Paste your text below, wrapped in <p> tags.
+        The elements demonstrated here — headings, lists, block
+        quotes, footnote references — are the full set of styles
+        available. Delete the sample text as you fill it in.
+        ════════════════════════════════════════════════════════════
+      -->
+<div class="body">
+<h2 id="introduction">Introduction</h2>
+<p>It is undeniable that Artificial Intelligence (AI) systems are rapidly revolutionising the world we live in. On a daily basis, billions of people interact with AI systems as they go about their lives.<a class="fn-ref" href="#fn1" id="fnref1">[1]</a> AI is now responsible for financial services, social media content recommendation systems, self-driving cars, automated manufacturing and many other processes integral to the increasingly interconnected world we inhabit. Although AI may now be on par with or superior to humans in certain narrow domains, Artificial General Intelligence (AGI) has not yet been developed. However, many AI researchers believe superhuman AGI will likely be developed by the end of this century.<a class="fn-ref" href="#fn2" id="fnref2">[2]</a> In this essay I am going to explain intelligence, AI and superintelligence before evaluating the potential benefits of superintelligent AGI alongside the risks inherent to its development.</p><aside aria-label="Notes for Introduction" class="section-notes"><span class="section-notes-label">Notes</span><ol><li id="fn1"><span class="fn-num">1</span><span class="fn-body">(Statistica, 2020) <a aria-label="Back to text" href="#fnref1">↩</a></span></li><li id="fn2"><span class="fn-num">2</span><span class="fn-body">(Dilmegani, 2020) <a aria-label="Back to text" href="#fnref2">↩</a></span></li></ol></aside>
+<h2 id="intelligence-and-ai">Intelligence and AI</h2>
+<h3 id="what-is-intelligence">What is intelligence?</h3>
+<p>The formal definition of intelligence is controversial. A neuroscientific definition of intelligence might include problem-solving or learning<a class="fn-ref" href="#fn3" id="fnref3">[3]</a> while a philosopher might have a definition of intelligence which includes a capacity for knowledge or understanding.<a class="fn-ref" href="#fn4" id="fnref4">[4]</a> In their seminal paper, Legg and Hutter identify a raft of commonalities including intelligence as a property of an individual interacting with an external environment, referencing some capacity for the individual to succeed or “profit” and an emphasis on learning.<a class="fn-ref" href="#fn5" id="fnref5">[5]</a> Furthermore the notion of profit implies the existence of some kind of goal, and that an intelligent ‘agent’ chooses their actions in a way that leads to them accomplishing their goals. The emphasis on learning implies that the environment is not fully known to the agent, and thusly that intelligence also includes a capacity to deal with some degree of uncertainty. Legg and Hutter go on to derive a general definition of intelligence:</p>
+<blockquote>
+<p><em>“Intelligence measures an agent’s ability to achieve goals in a wide range of environments”</em></p>
+</blockquote>
+<p>This definition is agreed with by other researchers in discussions surrounding superintelligence, notably Bostrom<a class="fn-ref" href="#fn6" id="fnref6">[6]</a> and Russel<a class="fn-ref" href="#fn7" id="fnref7">[7]</a>, however I think that this definition can become problematic: Because there are many types of goals, there are many types of intelligence which cannot be compared between. For example, it is foolish to compare the intelligences of a computer which can only play Chess and one which can only play Go. However, we can say that a third agent is more intelligent than both previous if it is at least as good in both tasks and strictly better in at least one.<a class="fn-ref" href="#fn8" id="fnref8">[8]</a> To this end we must differentiate between narrow and general intelligence, where a narrower intelligence is one with a small goal-domain and a broader intelligence is one with a larger goal-domain.</p><aside aria-label="Notes for What is intelligence?" class="section-notes"><span class="section-notes-label">Notes</span><ol><li id="fn3"><span class="fn-num">3</span><span class="fn-body">(Roberto Colom PhD, 2010) <a aria-label="Back to text" href="#fnref3">↩</a></span></li><li id="fn4"><span class="fn-num">4</span><span class="fn-body">(Lanz, 2000) <a aria-label="Back to text" href="#fnref4">↩</a></span></li><li id="fn5"><span class="fn-num">5</span><span class="fn-body">(Legg &amp; Hutter, 2007) <a aria-label="Back to text" href="#fnref5">↩</a></span></li><li id="fn6"><span class="fn-num">6</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref6">↩</a></span></li><li id="fn7"><span class="fn-num">7</span><span class="fn-body">(Russel, 2020) <a aria-label="Back to text" href="#fnref7">↩</a></span></li><li id="fn8"><span class="fn-num">8</span><span class="fn-body">(Tegmark, 2018) <a aria-label="Back to text" href="#fnref8">↩</a></span></li></ol></aside>
+<h3 id="what-is-ai">What is AI?</h3>
+<h4 id="a-short-history">A Short History</h4>
+<p>In the summer of 1956 a group of prominent academics gathered at Dartmouth College under the ambitious assertion that <em>“every aspect of learning or any other feature of intelligence can be so precisely described that a machine can be made to simulate it”.</em><a class="fn-ref" href="#fn9" id="fnref9">[9]</a> In the years that followed, early AI research bore fruit with developments in neural networks and natural language processing (NLP) proving promising, along with the “Logic Theorist” program proving 38 of the first 52 theorems in Russell and Whitehead’s <em>Principia Mathematica.</em><a class="fn-ref" href="#fn10" id="fnref10">[10]</a> The first advancements in Game AI were also made at this time. The fields optimistic tempo, however, could not last forever. Limited computing power and the combinatorial explosion caused by the inefficiency of early reasoning-as-search algorithms lead to AI underdelivering on its initial promises and underwent what would later be called an “AI-Winter” as research teams lost their funding.<a class="fn-ref" href="#fn11" id="fnref11">[11]</a> In the 1980’s, though, AI had a resurgence: So-called expert systems designed to solve problems or answer questions within a specific domain found corporate application, and unlike AI systems up to this point, were actually <em>useful.</em> A system called XCON built at Carnegie-Mellon University was saving the company Digital Equipment Corporation 40 million dollars annually by 1986.<a class="fn-ref" href="#fn12" id="fnref12">[12]</a> Nevertheless from the late 80’s to the early 90’s progress ground to a halt. Expert systems proved too brittle — they were difficult to update and expensive to maintain, while at the time personal computers were gaining in performance and falling in price.</p>
+<p>In the 1990’s, classical AI systems described above began to fall by the wayside as many of the issues hampering AI development began to get solved. A new paradigm of research incorporating elements of economics and probability, Bayesian statistics and game theory known as “Intelligent Agents” took off.<a class="fn-ref" href="#fn13" id="fnref13">[13]</a> The increasing convergence of mathematical rigour and agent theory with AI allowed for much more interdisciplinary research and made AI a more meticulous scientific field. The mid 2000’s saw the rise of social media and mass adoption of the internet giving corporations access to huge amounts of data which created a demand for powerful and flexible systems, filled by the resurgence in neural networks and the introduction of Machine Learning (ML) techniques. The impact of contemporary AI cannot be overstated: AI is prevalent in many sectors including technology, finance, manufacturing, logistics, security, science, marketing, insurance and more. Autonomous vehicles and smart assistants like Apple’s Siri and Amazon’s Alexa are rapidly gaining in users and in capability, and mobile phones are now even being built with dedicated ML processors inside.<a class="fn-ref" href="#fn14" id="fnref14">[14]</a> Some models estimate AI has the potential to deliver an additional $13 Trillion of economic activity globally by 2030.<a class="fn-ref" href="#fn15" id="fnref15">[15]</a></p>
+<figure>
+<img alt="Scatter plot of transistors per square millimetre against year from 1970 to 2020, on a logarithmic scale, with a straight trend line running through the data." class="" height="571" loading="lazy" src="./figures/fig-01-moores-law.webp" width="934"/>
+<figcaption><span class="fig-num">Fig. 1</span>Transistors per square millimetre, 1971–2018, log scale.<a class="fn-ref" href="#fn16" id="fnref16">[16]</a></figcaption>
+</figure>
+<h4 id="the-state-of-the-art">The State of the Art</h4>
+<p>This all sounds amazing, but in order to see how development might progress we need to garner some understanding of the innards of contemporary AI. The ideal is that of the perfect Bayesian agent, able to make probabilistically optimal use of all available information, however this ideal is unattainable because it is too computationally demanding to be implemented in any physical computer. AI can then by viewed as a search for heuristic techniques which allow us to approximate this ideal.<a class="fn-ref" href="#fn17" id="fnref17">[17]</a> The way this is done today is through the ‘Intelligent Agent’ paradigm. An intelligent agent is something which perceives information and acts on this information in pursuit of some goal.</p>
+<figure>
+<img alt="Diagram of an intelligent agent: an agent box containing sensors, an unknown agent function marked with a question mark, and actuators, exchanging percepts and actions with an environment box." class="invert-on-dark" height="601" loading="lazy" src="./figures/fig-02-intelligent-agent.webp" width="1136"/>
+<figcaption><span class="fig-num">Fig. 2</span>The intelligent agent model. Percepts arrive through sensors; the agent function maps them to actions taken through actuators.<a class="fn-ref" href="#fn18" id="fnref18">[18]</a></figcaption>
+</figure>
+<p>The agent is a continuous process over time and contains an ‘agent function’ which maps a given percept to a given action.<a class="fn-ref" href="#fn19" id="fnref19">[19]</a> There are many ways to program an agent function to decide what action is correct for a given percept, but one common approach is to use a utility function. Somethings utility is essentially its value, as determined by some pre-set criteria. As explained by AI pioneer Stuart Russel: “Given a purpose defined by a utility function, the machine aims to produce behaviour that maximises its expected utility averaged over the possible outcomes weighted by their probabilities”. Essentially this means that the AI aims to choose actions which generates the highest probability of increasing its utility.</p>
+<p>Using this approach, contemporary AI techniques have yielded some incredible results, albeit in narrow fields. Google and DeepMind’s Game AIs have mastered the games of Chess, Shogi and Go.<a class="fn-ref" href="#fn20" id="fnref20">[20]</a> The GPT-3 natural language model, also by DeepMind can write poetry and news articles which easily pass off as penned by a human hand.<a class="fn-ref" href="#fn21" id="fnref21">[21]</a> The DeepMind Game AI ‘MuZero’ is of particular note, as not only has it mastered Chess, Shogi and Go like its predecessors but it has also learned to play and master Atari videogames such as Pac Man, without being programmed with the rules beforehand. This represents an incredible advancement in AI being able to deal with significant logical uncertainty. Furthermore, AlphaFold, another DeepMind project has made significant headway into the protein folding problem. The challenge of accurately modelling the 3D structure of proteins has been a challenge in computational biology since the 1960s, and this advancement may have applications to research on several neurodegenerative diseases.<a class="fn-ref" href="#fn22" id="fnref22">[22]</a></p>
+<figure>
+<img alt="Chart comparing AlphaGo, AlphaGo Zero, AlphaZero and MuZero across the domains each masters and the prior knowledge each requires, showing knowledge requirements falling and domains widening across the four systems." class="" height="835" loading="lazy" src="./figures/fig-03-muzero.webp" width="838"/>
+<figcaption><span class="fig-num">Fig. 3</span>AlphaGo through MuZero: the domains mastered widen while the prior knowledge required falls away.<a class="fn-ref" href="#fn23" id="fnref23">[23]</a></figcaption>
+</figure>
+<p>The impact of modern AI is not all good, however. Shows like Netflix’s The Social Dilemma show how social media platforms use AI to monitor users, collect information about them and keep them addicted the platform while presenting them with as many advertisements as possible.<a class="fn-ref" href="#fn24" id="fnref24">[24]</a> These content selection algorithms are typically designed to maximise click-through, the probability that a user clicks on or interacts with the presented item. Instead of simply presenting the user with content it thinks the user will prefer, over time the algorithm learns to modify the preferences of the user.<a class="fn-ref" href="#fn25" id="fnref25">[25]</a> Because people are more likely to interact with content they either staunchly agree with or vehemently oppose, these algorithms have led to a proliferation of extremist content online and increasing political polarisation.<a class="fn-ref" href="#fn26" id="fnref26">[26]</a></p><aside aria-label="Notes for What is AI?" class="section-notes"><span class="section-notes-label">Notes</span><ol><li id="fn9"><span class="fn-num">9</span><span class="fn-body">(J. McCarthy, 1955) <a aria-label="Back to text" href="#fnref9">↩</a></span></li><li id="fn10"><span class="fn-num">10</span><span class="fn-body">(Gugerty, 2006) <a aria-label="Back to text" href="#fnref10">↩</a></span></li><li id="fn11"><span class="fn-num">11</span><span class="fn-body">(Gary Yang, 2006) <a aria-label="Back to text" href="#fnref11">↩</a></span></li><li id="fn12"><span class="fn-num">12</span><span class="fn-body">(Sviokla, 2008) <a aria-label="Back to text" href="#fnref12">↩</a></span></li><li id="fn13"><span class="fn-num">13</span><span class="fn-body">(Stuart Russel, 2010) <a aria-label="Back to text" href="#fnref13">↩</a></span></li><li id="fn14"><span class="fn-num">14</span><span class="fn-body">(Apple Inc., 2020) <a aria-label="Back to text" href="#fnref14">↩</a></span></li><li id="fn15"><span class="fn-num">15</span><span class="fn-body">(Jacques Bughin, 2018) <a aria-label="Back to text" href="#fnref15">↩</a></span></li><li id="fn16"><span class="fn-num">16</span><span class="fn-body">(Martin, 2019) <a aria-label="Back to text" href="#fnref16">↩</a></span></li><li id="fn17"><span class="fn-num">17</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref17">↩</a></span></li><li id="fn18"><span class="fn-num">18</span><span class="fn-body">(Stuart Russel, 2010) <a aria-label="Back to text" href="#fnref18">↩</a></span></li><li id="fn19"><span class="fn-num">19</span><span class="fn-body">(Russel, 2020) <a aria-label="Back to text" href="#fnref19">↩</a></span></li><li id="fn20"><span class="fn-num">20</span><span class="fn-body">(David Silver, Thomas Hubert, Julian Schrittwiesser, 2017) <a aria-label="Back to text" href="#fnref20">↩</a></span></li><li id="fn21"><span class="fn-num">21</span><span class="fn-body">(Branwen, 2020) <a aria-label="Back to text" href="#fnref21">↩</a></span></li><li id="fn22"><span class="fn-num">22</span><span class="fn-body">(John Jumper, 2020) <a aria-label="Back to text" href="#fnref22">↩</a></span></li><li id="fn23"><span class="fn-num">23</span><span class="fn-body">(Schrittwieser, 2020) <a aria-label="Back to text" href="#fnref23">↩</a></span></li><li id="fn24"><span class="fn-num">24</span><span class="fn-body">(The Social Dilemna , 2020) <a aria-label="Back to text" href="#fnref24">↩</a></span></li><li id="fn25"><span class="fn-num">25</span><span class="fn-body">(Russel, 2020) <a aria-label="Back to text" href="#fnref25">↩</a></span></li><li id="fn26"><span class="fn-num">26</span><span class="fn-body">(Wallis, 2015) <a aria-label="Back to text" href="#fnref26">↩</a></span></li></ol></aside>
+<h2 id="machine-superintelligence">Machine Superintelligence</h2>
+<h3 id="what-is-superintelligence">What is superintelligence?</h3>
+<p>If AI researchers were to develop a roughly human-level AGI (this is the final goal of AI research) such an agent would be able to write code or do mathematics and science to a similar level to a human. It follows then, that this agent would be able to design and program AI as a human programmer would. It would then be able to modify and improve its own neural architecture (since its mind exists only as code, not as a physical brain like a humans’). As it increases its intelligence, it becomes more able to further increase its intelligence. This cycle of recursive self-improvement is what researchers have termed the <strong>intelligence explosion</strong>. Once the AGI’s intelligence surpasses that of humans, it becomes superintelligent: It possesses general intelligence greater than any human’s ability.<a class="fn-ref" href="#fn27" id="fnref27">[27]</a>, <a class="fn-ref" href="#fn28" id="fnref28">[28]</a></p>
+<p>There are three ways in which a given superintelligence may have an advantage over human intelligence: Quantitative superintelligence, qualitative superintelligence and collective superintelligence. Artificial superintelligence is likely to draw from all three of these areas. Computers already hold a speed advantage: Six orders of magnitude separate the speed of nerve impulses from photons.<a class="fn-ref" href="#fn29" id="fnref29">[29]</a> A good example of this are modern chess engines, which create their advantage over human players simply by being faster, able to explore thousands of possible sequences of moves in the blink of an eye. Superintelligent AGI would also be qualitatively more intelligent thanks to being able to improve its own architecture rapidly. Minor architectural differences brought on by genetic and environmental factors create a relatively wide spectrum of intelligence in animals<a class="fn-ref" href="#fn30" id="fnref30">[30]</a>, but for superintelligence unlimited by the constraints of biological evolution, the only constraints would be the laws of physics. The most abstract advantage held by artificial superintelligence would be collective superintelligence. This is best illustrated through our current trend toward distributed computing: During the ongoing pandemic Folding@Home, a distributed computing project researching the protein folding problem dedicated its resources toward the quest for a COVID-19 vaccine. At one point Folding@Home wielded more computing power distributed across the globe than the most powerful supercomputer ever constructed.<a class="fn-ref" href="#fn31" id="fnref31">[31]</a>, <a class="fn-ref" href="#fn32" id="fnref32">[32]</a> By distributing itself across the internet as well as making use of large single super computers, a superintelligent AGI would be able to wield enormous amounts of processing power, and this is before the superintelligence puts itself to work developing new and better computers entirely. The aforementioned most powerful supercomputer ever constructed wielded on the order of 10<sup>17</sup> operations per second, while the theoretical limit for a laptop-sized computer is on the order of 10<sup>51</sup>.<a class="fn-ref" href="#fn33" id="fnref33">[33]</a></p>
+<h4 id="paths-to-superintelligence">Paths to superintelligence</h4>
+<p>Now that we know what superintelligence is and the forms it may take, we need to look at how it is likely that superintelligence will be developed.</p>
+<p>The most likely way is through the continuation of research and development in modern AI/ML techniques eventually leading us to develop AGI. This would naturally lead to superintelligence as even a weak AGI could function as a ‘seed-AGI’, slowly gaining capability through additional hardware resources and modifications by human programmers. Around the human level, the seed-AGI could then take over its own development, beginning the intelligence explosion as its intellectual capability outstrips its creators’. Furthermore, current computing hardware already outmatches human minds in terms of raw OPS. Moreover once a seed-AGI reaches human level it will be able to comprehend and digest the entirety of the internet. These two factors create what Bostrom terms ‘hardware overhang’ and ‘software overhang’<a class="fn-ref" href="#fn34" id="fnref34">[34]</a> enabling for an increase in rate of development as the seed AI reaches the human level. The main advantage of this path compared to the others we will discuss shortly is that a “pure-AI” would not be limited by its architecture in the process of self-improvement.</p>
+<p>Other paths are possible, however less likely to succeed and possibly less powerful than the pure-AI route.<a class="fn-ref" href="#fn35" id="fnref35">[35]</a> These include whole-brain emulation and brain-computer interfaces. There are advantages and disadvantages to these compared to pure-AI, the main disadvantage being that these approaches make use of the human neural architecture. This makes these approaches brittle and hard to improve once implemented, although one possibility is that the advances in neurotechnology needed for these techniques to work are easier to complete than the theoretical breakthroughs prerequisite to pure-AI. The first emulations or enhanced humans could then have their limited superintelligence put to work designing the first successful seed-AGI.</p>
+<h4 id="timeline-speed-of-development">Timeline &amp; speed of development</h4>
+<p>Assuming that the path which humanity turns down involves creating superintelligence through the pure-AI route, irrespective of the implementation there are two timelines we must consider: The time from now until the creation of a seed-AI and beginning of the intelligence explosion, and the length of the intelligence explosion or take-off period itself. As human intelligence likely occupies an extremely small space with regard to the spectrum of all possible intelligence, the time from the start of the intelligence explosion to superintelligence would likely be very rapid, indicating a medium to fast take-off speed of weeks at the most.<a class="fn-ref" href="#fn36" id="fnref36">[36]</a> For other reasons such as the lack of hardware scalability in modern supercomputers (which would likely be used to host the first successful projects) a slow take-off scenario cannot be excluded from possibility. Regarding the time from now until the start of the take-off, this is very uncertain and difficult to predict. Researchers tend to estimate a timeline of around 2055 for a 50% chance for SAGI to be developed, and closer to 90% by 2100, however these are essentially just opinion polls of people who work in the field thus they may be wildly inaccurate.<a class="fn-ref" href="#fn37" id="fnref37">[37]</a></p>
+<h4 id="first-move-advantage">First Move Advantage</h4>
+<p>In the likely case of a fast to medium length intelligence explosion occurring over at most several weeks, it is likely that the first project to begin the transition would gain what we can term a <strong>decisive strategic advantage.</strong> <a class="fn-ref" href="#fn38" id="fnref38">[38]</a> This can be loosely defined as an edge over competing entities (perhaps in computational resources or cognitive architecture) which may be significant enough to achieve global domination. It can be achieved in a number of ways, and is not exclusive to superintelligence, indeed for four years after World War Two the US held a such an advantage with its monopoly over nuclear weapons. In such a scenario, one possible action taken by a superintelligence may be the formation of a <strong>singleton</strong>: A single decision-making agency at the global level. There was indeed something similar considered by the US in the post-war period - they could have used their monopoly as a bargaining chip to form a world government, essentially a veto-less United Nations, or built up their arsenal in order to threaten and possibly carry out a first strike - establishing itself as the singular global power. In reality they tried a softer version of the more benign approach, proposing an agreement to decommission their nuclear weapons and openly share nuclear technology, but this proposal was rejected by the Soviet Union, helping to spark the Cold War.<a class="fn-ref" href="#fn39" id="fnref39">[39]</a> A superintelligence would have no issue establishing itself as a singleton through any number of strategic advantages. A plausible scenario is given by Tegmark as a prelude to his book <em>Life 3.0</em> where a secrete corporate research project develops a superintelligent AGI and uses it to found a business empire which eventually monopolises the global economy due to its immense technological advantage.</p>
+<p>Although a superintelligence might have the capacity to do such a thing, what would be its motivation to do so? How can we reason about the possible motivations of something far, far more intelligent than ourselves?</p>
+<h4 id="convergent-instrumental-goals">Convergent Instrumental Goals</h4>
+<p>The theory of instrumental convergence suggests that almost every possible final goal shares a common set of instrumental goals. Some of the most important instrumental goals are identified as self-preservation, resource acquisition, cognitive enhancement and technological perfection.<a class="fn-ref" href="#fn40" id="fnref40">[40]</a> These allow us some room to predict the actions of a superintelligence, as working to achieve all of these subgoals would increase the AI’s capacity to achieve its final goal. This creates a substantial problem for us: What if we don’t like the AIs actions in pursuit of the final goal we program it with? Due to the AI’s instrumental goal of self-preservation, any attempt to switch it off would likely be ineffective due to the AI’s strategic advantage or at worst met with deadly force. Furthermore, through technological perfection the AI would have the means to swiftly end human hegemony, leaving it free to pursue the final goal we programmed it with free of interruptions.</p>
+<p>This illustrates the problem with most depictions of superintelligent AI in media such as the Terminator franchise: superintelligent AI will not decide to kill us because it doesn’t like us, it will kill us because we represent an existential threat to the AI, and our existence is suboptimal to the AI’s pursuit of its final goals.</p><aside aria-label="Notes for What is superintelligence?" class="section-notes"><span class="section-notes-label">Notes</span><ol><li id="fn27"><span class="fn-num">27</span><span class="fn-body">(Good, 1965) <a aria-label="Back to text" href="#fnref27">↩</a></span></li><li id="fn28"><span class="fn-num">28</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref28">↩</a></span></li><li id="fn29"><span class="fn-num">29</span><span class="fn-body">(Welsh, 2015) <a aria-label="Back to text" href="#fnref29">↩</a></span></li><li id="fn30"><span class="fn-num">30</span><span class="fn-body">(Roberto Colom PhD, 2010) <a aria-label="Back to text" href="#fnref30">↩</a></span></li><li id="fn31"><span class="fn-num">31</span><span class="fn-body">(TOP500, 2020) <a aria-label="Back to text" href="#fnref31">↩</a></span></li><li id="fn32"><span class="fn-num">32</span><span class="fn-body">(Folding@Home, 2020) <a aria-label="Back to text" href="#fnref32">↩</a></span></li><li id="fn33"><span class="fn-num">33</span><span class="fn-body">(Russel, 2020) <a aria-label="Back to text" href="#fnref33">↩</a></span></li><li id="fn34"><span class="fn-num">34</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref34">↩</a></span></li><li id="fn35"><span class="fn-num">35</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref35">↩</a></span></li><li id="fn36"><span class="fn-num">36</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref36">↩</a></span></li><li id="fn37"><span class="fn-num">37</span><span class="fn-body">(Tegmark, 2018) <a aria-label="Back to text" href="#fnref37">↩</a></span></li><li id="fn38"><span class="fn-num">38</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref38">↩</a></span></li><li id="fn39"><span class="fn-num">39</span><span class="fn-body">(Gerber, 1982) <a aria-label="Back to text" href="#fnref39">↩</a></span></li><li id="fn40"><span class="fn-num">40</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref40">↩</a></span></li></ol></aside>
+<h3 id="existential-risk">Existential Risk</h3>
+<p>Whether or not a machine superintelligence would be hostile or beneficial depends on a large number of circumstances both internal and external to whatever project ends up being successful. We will now explore these risks and rewards so that we can come to a conclusion regarding the likely benevolence of machine superintelligence.</p>
+<h4 id="the-control-problem">The Control Problem</h4>
+<p>The control problem deals with the issue brought about by the existence of these convergent instrumental goals: How do we create AI which is totally <strong>goal-aligned</strong> with its creators? As we will soon see, this problem may actually prove more challenging than creating AGI itself.</p>
+<p>One of the first potential solutions could be to hard code the AI with a seemingly benevolent final goal, but this is ineffectual and could run into a number of what Bostrom terms malignant failure modes. These all result in horrible unintended consequences for humanity regardless of the goal. For example, a final goal might be “make the project sponsors happy”. Initially it would tell jokes, exhibit a joyful personality, make money etc. Eventually it would realise the simplest way to achieve this goal is to insert electrodes into the pleasure centres of human brains, forcing a constant state of ecstasy. The convergent instrumental goal of technological maximisation assists in this regard since with sufficiently advanced nanotechnology it may be possible to do this without any human ever noticing.</p>
+<p>One method of combating this could be through <strong>capability control</strong>: Placing physical restrictions on the ability of the AI to affect its environment, however current AI safety research sees this as ancillary since it does not combat the central issue which causes these malignant failures. This is the fact that the AI’s utility function is tied explicitly to the goal it has been given, not the <em>intended</em> <em>meaning</em> of the goal. To fix this, we need a method of <strong>motivation selection</strong>. The most promising of these is <strong>indirect normativity</strong>, where rather than explicitly stating a final goal we state a process for deriving the final goal and build the AI such that it is motivated to pursue what it understands this final goal to be whilst also pursuing a clearer idea of said goal.</p>
+<p>But what should this process be? What do we want the superintelligence to want? Again, direct specification would fail miserably. When it comes to producing a complete ethical theory of value, since most philosophers disagree, most philosophers must be wrong.<a class="fn-ref" href="#fn41" id="fnref41">[41]</a> Coherent Extrapolated Volition (CEV), a type of indirect normativity proposed by inventor and futurist Eliezer Yudkowsky provides a solution to this.</p>
+<blockquote>
+<p>“Our coherent extrapolated volition is our wish if we knew more, thought faster, were more the people we wished we were, had grown up farther together; where the extrapolation converges rather than diverges, where our wishes cohere rather than interfere; extrapolated as we wish that extrapolated, interpreted as we wish that interpreted.”<a class="fn-ref" href="#fn42" id="fnref42">[42]</a></p>
+</blockquote>
+<p>The main promise of building a superintelligent AGI is that it allows us to offload the reasoning of how best to carry out our wishes. CEV thus allows us to offload the reasoning of what our wishes actually are. The proposed implementation of CEV means that a superintelligent AGI would only act where it perceives the wishes of all humans to converge, and refrain from action where they do not, instead choosing to seek more information so that it can better understand what its actions should be.</p>
+<p>There are a great many other approaches, considerations and aspects to the control problem that have been overlooked in this short section. Ultimately, it is likely that as long as we get the initial conditions for the intelligence explosion approximately right, any minor misgivings in goal content could ultimately be righted by the superintelligence itself. Furthermore, contemporary AI is far from being able to implement the vague blueprints given above as a mathematically (thus programmable) rigorous solution. Not only that, but the control problem and the AGI problem both appear to be equally challenging, yet most AI research has neglected the control problem. Luckily this is beginning to change with prominent AI researchers, academics and philosophers all beginning to campaign for a focus on “provably beneficial” AI. <a class="fn-ref" href="#fn43" id="fnref43">[43]</a>, <a class="fn-ref" href="#fn44" id="fnref44">[44]</a></p>
+<p>Even if we do manage to solve the control problem, this might be a case of “out of the frying pan and into the fire”, as there are still significant challenges remaining. These include the nature of the project which is successful, and the socio-political and economic climate into which superintelligence emerges.</p>
+<h4 id="programmed-malevolence">Programmed Malevolence</h4>
+<p>The simplest and most obvious risk which may exist with superintelligence is simply that whatever project is first to succeed ingrains their progeny with a final goal which is not representative of humanities’ as a species. We saw in the section on paths to superintelligence that the barriers to the conception of superintelligence are mostly theoretical, and therefore we cannot rule out the possibility of superintelligent AGI being instantiated by a rogue nation, terrorist organisation or “lone hacker” scenario. In the likelihood of a fast take-off, said superintelligence could easily gain a decisive strategic advantage and establish a singleton, having free reign to pursue its instrumental and final goals. What those goals are is ultimately inconsequential speculation: The point is that we would be powerless to prevent them. Since human intelligence represents only a lower bound on the capabilities of a superintelligent AGI, any humanly divined plot for world domination forms the minimum of what such a superintelligence could accomplish.</p>
+<p>Additionally, in the scenario that a bad actor is successful in the quest for superintelligence it is even more likely than in other scenarios that the control problem will have been ignored. Since a mal-intended project is more likely to be paranoid about being discovered by rivals or security services, development is likely to be rushed.</p>
+<p>This could result in any one of the malignant failure modes we discussed earlier.</p>
+<h4 id="multi-polar-outcomes">Multi-Polar Outcomes</h4>
+<p>A slow take-off scenario where multiple agents reach superintelligence simultaneously as the product of numerous corporate and national research programs might seem beneficial at first glance due to the increased competition, but this may prove fallacious. Even then a single project might be able to produce enough of a lead over its competitors that it establishes a decisive strategic advantage.<a class="fn-ref" href="#fn45" id="fnref45">[45]</a> This would encourage an arms-race dynamic to develop between competing corporations and national research agencies, which is often a zero-sum game since the balance of power is unlikely to shift.<a class="fn-ref" href="#fn46" id="fnref46">[46]</a> Moreover, this competitive dynamic would prioritise speed of development over meticulous safety protocol, leading to a greater chance of the control problem being forgone and again, humanities end by one of the malignant failure modes discussed earlier.</p>
+<p>Even if a competitive dynamic manages to produce safe, goal-aligned AI, the goals these AI would be aligned with would not necessarily be humanities CEV or some similar approach, but the goals of the corporations and nations which sponsored their development. This could be disastrous: since software is cheaply copyable superintelligent AI workers could easily replace a majority of human jobs in most corporations. Wages for human workers would fall dramatically, possibly to subsistence level - as a result the only place humans would even have a chance would be areas where consumers have a preference for humans.</p>
+<p>Bostrom argues that this could be avoided as since through new technologies and cheaper, more efficient workers economic growth would skyrocket to orders of magnitude above current levels. Returns on owned capital would similarly increase. Since capital is owned by humans and even a tiny fraction of pre-transition wealth would balloon to a huge amount in absolute terms post transition, Bostrom posits that if a small amount of this was redistributed to those majority of humans who do not own capital through increased taxes and public services, there would be far more than enough to go around.<a class="fn-ref" href="#fn47" id="fnref47">[47]</a></p>
+<p>However, this idea has been refuted by a recent paper looking into the challenges involved in such a multi-polar scenario.<a class="fn-ref" href="#fn48" id="fnref48">[48]</a> The paper argues that superintelligence emerging in an economy shaped by neoliberal policies exacerbates the risk of extreme adverse effects. Furthermore, it is argued that Bostrom’s outlook that even a relatively small amount of wealth post transition would be enormous in absolute terms in incorrect as the production of food and other basic goods would be subject to competition between basic needs and other uses, driving up prices, hence most people might not benefit from this growth let alone survive. This is similar to the role of the biofuel industry in recent famines.<a class="fn-ref" href="#fn49" id="fnref49">[49]</a> Building on the assumption that firms tend to maximise growth under environmental constraints, it is argued, firms would favour widespread adoption of superintelligent workers including autonomising management and high-level decision-making roles. Indeed, fully autonomous corporations already exist.<a class="fn-ref" href="#fn50" id="fnref50">[50]</a> It is likely in this sort of economic climate that these corporations would be wholly selfish, motivated only to pursue growth and efficiency. They would have no motivation to cede resources for the benefit of society. Moreover, several factors make it less likely that government intervention to ensure that superintelligent AGI serves humans is not guaranteed to be successful. It is concluded that since neoliberal capitalism has nothing inherent in its structure where humans are a guaranteed beneficiary, and this will be exacerbated by the large-scale removal of humans from the labour market, a different approach along the lines of <strong>Degrowth</strong> is needed.</p>
+<p>This, in short, involves moving from an economic system promoting self-interest and competition to one which prizes altruism and collective responsibility. The application of this policy would cause demand (and thus production) to be positively correlated with wages and negatively correlated with resource use among other parameters. This could be implemented with a “common good balance sheet”, essentially quantifying the social responsibility of a corporation, where management AGI instead of pursuing limitless growth are motivated to pursue the maximisation of these social parameters.</p><aside aria-label="Notes for Existential Risk" class="section-notes"><span class="section-notes-label">Notes</span><ol><li id="fn41"><span class="fn-num">41</span><span class="fn-body">(David Bourget, 2014) <a aria-label="Back to text" href="#fnref41">↩</a></span></li><li id="fn42"><span class="fn-num">42</span><span class="fn-body">(Yudkowsky, 2004) <a aria-label="Back to text" href="#fnref42">↩</a></span></li><li id="fn43"><span class="fn-num">43</span><span class="fn-body">(Russel, 2020) <a aria-label="Back to text" href="#fnref43">↩</a></span></li><li id="fn44"><span class="fn-num">44</span><span class="fn-body">(Tegmark, 2018) <a aria-label="Back to text" href="#fnref44">↩</a></span></li><li id="fn45"><span class="fn-num">45</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref45">↩</a></span></li><li id="fn46"><span class="fn-num">46</span><span class="fn-body">(Harari, 2015) <a aria-label="Back to text" href="#fnref46">↩</a></span></li><li id="fn47"><span class="fn-num">47</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref47">↩</a></span></li><li id="fn48"><span class="fn-num">48</span><span class="fn-body">(Pueyo, 2018) <a aria-label="Back to text" href="#fnref48">↩</a></span></li><li id="fn49"><span class="fn-num">49</span><span class="fn-body">(Jason Hill, 2006) <a aria-label="Back to text" href="#fnref49">↩</a></span></li><li id="fn50"><span class="fn-num">50</span><span class="fn-body">(Wright, 2020) <a aria-label="Back to text" href="#fnref50">↩</a></span></li></ol></aside>
+<h3 id="humanity-s-cosmic-endowment">Humanity’s Cosmic Endowment</h3>
+<p>Likely by pure chance, life has emerged on only one planet that we know of out of 10 Septillion in the known universe.<a class="fn-ref" href="#fn51" id="fnref51">[51]</a> Life evolved gradually grew more and more intelligent through natural selection, discovering fire, the wheel, agriculture, the internal combustion engine and semiconductors. Through superintelligence, humanity has the potential to reach technological maturity, where our technological development is maximised as it is only limited by the laws of physics. In the short-term advancements may include medicines like cures for cancer, diabetes, AIDs and Alzheimer’s’, nano-scale manufacturing allowing the restructuring of baryonic matter at a sub-atomic level and advanced spaceflight leading to the colonisation of the solar system and terraforming of nearby worlds. In the long term, humanity may become not just multiplanetary but a multi-solar species inhabiting nearby systems as near-c travel would enable travel to Proxima Centauri in just a few years, which may be made more manageable with technologies like suspended animation. Furthermore, we know our current understanding of the laws of physics to be incomplete so it may be that superluminal travel is also possible. Other future technologies include immortality (or at the very least life extension) through advanced genetic engineering and hyper-realistic virtual reality.</p><aside aria-label="Notes for Humanity’s Cosmic Endowment" class="section-notes"><span class="section-notes-label">Notes</span><ol><li id="fn51"><span class="fn-num">51</span><span class="fn-body">(Siegel, 2014) <a aria-label="Back to text" href="#fnref51">↩</a></span></li></ol></aside>
+<h2 id="conclusions">Conclusions</h2>
+<p>Having now explored the reasons for creating superintelligence and the problems its’ development faces, it is evident that the AI problem, the control problem and the resultant socioeconomic and political issues they bring are quite possibly the greatest single problems ever faced in their respective fields. We can also see that the title question was perhaps a slight misnomer — there is no room for grey area here. Either superintelligence will benefit humanity, immensely, allowing us to make full use of the vast universe we have been endowed — or we will all be too dead to complain about it.</p>
+<p>That said, I am cautiously optimistic. Based on the growing focus on AI safety in recent years, I believe the control problem can be solved in conjunction with the AI problem. Prominent figures such as Elon Musk have spoken out about the existential risk of superintelligence while modern AI pioneer Stewart Russel is campaigning for provably beneficial AI. DeepMind’s website now reads “We research and build safe artificial intelligence”. The gap between progress in AI and progress in control is beginning to narrow, even though AI had a 50-year head start. Motivation selection methods like CEV provide a promising approach, and what remains is the critical theoretical development to be able to imbue AI with these concepts. Easier said than done, but I believe the huge profit motive for corporations such as Google-owned DeepMind to not just create AGI but also create safe, beneficial AGI will ensure that enough financial and human resources will be thrown at the problem.</p>
+<p>As for the social, political and economic problems surrounding superintelligence, I believe there is also room for hope. Throughout history, there has been a trend towards increasing international cooperation and collaboration, in line with technological and economic development. This trend has continued throughout the 20<sup>th</sup> century and into the 21<sup>st</sup> century with organisations such as the UN, EU, NATO and AU. Due to the impossibility of ruling out the lone hacker or rogue state scenario, there is a worry that nations with promising AI projects might develop a stronger surveillance state and more insular policy, avoiding international collaboration for fear of the technology being leaked. Furthermore, if there is a lack of international collaboration it becomes increasing likely for an arms-race dynamic to develop. However, I think this is unlikely. Even rogue states like North Korea still depend on the outside world for their very existence, and so it would not be in their interest to demolish it. Furthermore, the pace of development outside of rogue states or small organisations would rapidly outstrip any attempts by such bad actors, making it unlikely that the first project to reach superintelligence would be from such a state. I also think it is likely that the control problem will not be ignored in the future as it has been up to the last few years, since as mentioned above there is no incentive for projects to produce unsafe, dysfunctional superintelligence. I think it is most probable that a dipolar scenario will develop between the US or China due to the high concentration of AI-focused companies between the two, such as Alphabet (parent company of DeepMind and Google) and SenseTime (the company providing the CCP with advanced facial recognition technology). Like prior advancements in technology global economic and political elites stand to gain more than the average person since owning even a small amount of capital pre intelligence explosion would amount to a huge fortune post-transition. However, the role of such elites to allocate capital efficiently would ultimately be better served by a superintelligence, and therefore it is likely that eventually c-suite corporate executives and perhaps even politicians would be replaced by superintelligent agency.</p>
+<p>Thus, it is in the interest of the global and political elite, as well as the interest of all humanity, to act pre-emptively to avoid such a scenario since unlike other social issues (resource exhaustion, social injustice, environmental degradation), they do not have the means to simply avoid it. This realisation should encourage greater international collaboration of research into both AI and the control problem and should ensure that the values imbued in the resultant superintelligence should follow something along the lines of CEV, providing mutual benefit for all involved nations. This would avoid the multi-polar scenario entirely, at least initially. If just one superintelligent agent were created, for example, they could be placed under the control at least initially of some sort of international coalition similar to the UN, although perhaps stronger, functioning as an effective word government.</p>
+<p>The AGI problem and the control problem are, I think, the two most significant scientific, technological, social, economic and political challenges that humankind will ever have to solve. Whether or not machine superintelligence will benefit humanity comes down to the solutions developed to these problems. I think the largest obstacle which stands in the way here is not technical or scientific: It is our hubris, that we as a species cannot imagine anything being cleverer than ourselves while simultaneously trying to develop something which is.</p>
+</div>
+
+<section class="footnotes" id="bibliography">
+<p class="footnotes-label">Bibliography</p>
+<ul class="bib">
+<li>Apple Inc., 2020. <em>Apple unveils all-new iPad Air with A14 Bionic, Apple’s most advanced chip.</em> [Online] Available at: <a href="https://www.apple.com/newsroom/2020/09/apple-unveils-all-new-ipad-air-with-a14-bionic-apples-most-advanced-chip/" rel="noopener" target="_blank">https://www.apple.com/newsroom/2020/09/apple-unveils-all-new-ipad-air-with-a14-bionic-apples-most-advanced-chip/</a> [Accessed 22 November 2020].</li>
+<li>Bostrom, N., 2017. <em>Superintelligence: Paths, Dangers, Strategies.</em> s.l.:Oxford University Press.</li>
+<li>Branwen, G., 2020. <em>GPT-3 Creative Fiction.</em> [Online] Available at: <a href="https://www.gwern.net/GPT-3" rel="noopener" target="_blank">https://www.gwern.net/GPT-3</a> [Accessed 22 November 2020].</li>
+<li>CB Insights, 2020. <em>40+ Corporations Working On Autonomous Vehicles.</em> [Online] Available at: <a href="https://www.cbinsights.com/research/autonomous-driverless-vehicles-corporations-list/" rel="noopener" target="_blank">https://www.cbinsights.com/research/autonomous-driverless-vehicles-corporations-list/</a> [Accessed 31 December 2020].</li>
+<li>Copeland, J., 2006. <em>Colossus: The secrets of Bletchley Park’s code-breaking Computers.</em> s.l.:Oxford University Press.</li>
+<li>David Bourget, D. J. C., 2014. What do philosophers believe?. <em>Philosophical Studies,</em> 170(3), pp. 465-500.</li>
+<li>David Silver, Thomas Hubert, Julian Schrittwiesser, 2017. <em>arXiv.</em> [Online] Available at: <a href="https://arxiv.org/abs/1712.01815" rel="noopener" target="_blank">https://arxiv.org/abs/1712.01815</a> [Accessed 15 November 2020].</li>
+<li>Dearden, L., 2020. <em>Counterterror police chief warns of ‘new and worrying trend’ of teenage neo-Nazis,</em> s.l.: The Independent.</li>
+<li>Dilmegani, C., 2020. <em>995 experts opinion: AGI/singularity by 2060 [2020 update].</em> [Online] Available at: <a href="https://research.aimultiple.com/artificial-general-intelligence-singularity-timing/" rel="noopener" target="_blank">https://research.aimultiple.com/artificial-general-intelligence-singularity-timing/</a> [Accessed 22 November 2020].</li>
+<li>Folding@Home, 2020. <em>Folding@Home Stats.</em> [Online] Available at: <a href="https://stats.foldingathome.org/os" rel="noopener" target="_blank">https://stats.foldingathome.org/os</a> [Accessed 29 December 2020].</li>
+<li>Gary Yang, C. S. B. M. T. H., 2006. <em>Washington University History of AI.</em> [Online] Available at: <a href="https://courses.cs.washington.edu/courses/csep590/06au/projects/history-ai.pdf" rel="noopener" target="_blank">https://courses.cs.washington.edu/courses/csep590/06au/projects/history-ai.pdf</a> [Accessed 19 November 2020].</li>
+<li>Gerber, L. G., 1982. The Baruch Plan and the Origins of the Cold War. <em>Diplomatic History,</em> 6(4), pp. 69-96.</li>
+<li>Good, I., 1965. Speculations Concerning the First Ultraintelligent Machine. <em>Advances in Computers,</em> Volume 6.</li>
+<li>Gugerty, L., 2006. <em>Newell and Simon’s Logic Theorist: Historical Background and Impact on Cognitive Modelling.</em> Clemson, Psychology Department, Clemson University.</li>
+<li>Harari, Y. N., 2015. <em>Sapiens: A Brief History of Humankind.</em> London: Penguin.</li>
+<li>J. McCarthy, M. L. M. N. R. C. E. S., 1955. <em>Wayback Machine.</em> [Online] Available at: <a href="https://web.archive.org/web/20080930164306/http://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html" rel="noopener" target="_blank">https://web.archive.org/web/20080930164306/http://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html</a> [Accessed 11 November 2020].</li>
+<li>Jacques Bughin, J. S. J. M. M. C. R. J., 2018. <em>Notes from the AI frontier: Modeling the impact of AI on the world economy.</em> [Online] Available at: <a href="https://www.mckinsey.com/featured-insights/artificial-intelligence/notes-from-the-ai-frontier-modeling-the-impact-of-ai-on-the-world-economy#" rel="noopener" target="_blank">https://www.mckinsey.com/featured-insights/artificial-intelligence/notes-from-the-ai-frontier-modeling-the-impact-of-ai-on-the-world-economy#</a> [Accessed 22 November 2020].</li>
+<li>Jason Hill, E. N. D. T. S. P. D. T., 2006. Environmental, economic, and energetic costs and benefits of biodiesel and ethanol biofuels. <em>Proceedings of the National Academy of Sciences,</em> 103(30), pp. 11206-11210.</li>
+<li>John Jumper, R. E. A. P. e. a., 2020. High Accuracy Protein Structure Prediction Using Deep Learning. In: <em>CASP14 Abstracts.</em> s.l.:Protein Structure Prediction Center, pp. 22-24.</li>
+<li>Lanz, P., 2000. The Concept of Intelligence in Psychology and Philosophy. <em>Prerational Intelligence: Adaptive Behavior and Intelligent Systems Without Symbols and Logic,</em> Volume 1, pp. 19-30.</li>
+<li>Legg, S. &amp; Hutter, M., 2007. Universal Intelligence: A Definition of Machine Intelligence. <em>Minds &amp; Machines,</em> 17(4), pp. 391-444.</li>
+<li>Martin, E., 2019. <em>Moore’s Law is Alive and Well.</em> [Online] Available at: <a href="https://medium.com/predict/moores-law-is-alive-and-well-eaa49a450188" rel="noopener" target="_blank">https://medium.com/predict/moores-law-is-alive-and-well-eaa49a450188</a> [Accessed 22 November 2020].</li>
+<li>Nwana, H. S., 1996. Software Agents: An Overview. <em>Knowledge Engineering Review,</em> 21(3), pp. 205-244.</li>
+<li>Our World in Data, 2015. <em>World GDP over the last two millenia.</em> [Online] Available at: <a href="https://ourworldindata.org/grapher/world-gdp-over-the-last-two-millennia" rel="noopener" target="_blank">https://ourworldindata.org/grapher/world-gdp-over-the-last-two-millennia</a> [Accessed 1 January 2021].</li>
+<li>Our World In Data, 2019. <em>Year-to-year percentage change in primary energy consumption, World, 2019.</em> [Online] Available at: <a href="https://ourworldindata.org/grapher/percentage-change-energy-by-source?time=2020" rel="noopener" target="_blank">https://ourworldindata.org/grapher/percentage-change-energy-by-source?time=2020</a> [Accessed 31 December 2020].</li>
+<li>Pueyo, S., 2018. Growth, degrowth, and the challenge of artificial superintelligence. <em>Journal of Cleaner Production.</em></li>
+<li>Roberto Colom PhD, S. K. R. E. J. R. J. H., 2010. Human intelligence and brain networks. <em>Dialogues in Clinical Neuroscience,</em> 12(4), pp. 489-501.</li>
+<li>Russel, S., 2020. <em>Human Compatible: AI and the Problem of Control.</em> s.l.:Penguin Books.</li>
+<li>Schrittwieser, J. A. I. H. T. e. a., 2020. Mastering Atari, Go, chess and shogi by planning with a learned model.. <em>Nature,</em> Issue 588, pp. 604-609.</li>
+<li>Siegel, E., 2014. <em>How Many Planets In The Universe?.</em> [Online] Available at: <a href="https://medium.com/starts-with-a-bang/how-many-planets-in-the-universe-9153a05bd0d5" rel="noopener" target="_blank">https://medium.com/starts-with-a-bang/how-many-planets-in-the-universe-9153a05bd0d5</a> [Accessed 13 January 2021].</li>
+<li>Statistica, 2020. <em>Facebook daily active user stats.</em> [Online] Available at: <a href="https://www.statista.com/statistics/346167/facebook-global-dau/" rel="noopener" target="_blank">https://www.statista.com/statistics/346167/facebook-global-dau/</a> [Accessed September 2020].</li>
+<li>Stuart Russel, P. N., 2010. <em>Artificial Intelligence: A Modern Approach.</em> 3rd Edition ed. s.l.:Pearson Education.</li>
+<li>Sviokla, J., 2008. An Examination of the Impact of Expert Systems on the Firm: The Case of XCON. <em>Management Information Systems Quarterly,</em> 14(2).</li>
+<li>Tegmark, M., 2018. <em>Life 3.0.</em> s.l.:Penguin Books.</li>
+<li><em>The Fourth Industrial Revolution &amp; What Were Those Other Two?.</em> 2020. [Film] s.l.: Economics Explained.</li>
+<li><em>The Social Dilemna.</em> 2020. [Film] Directed by Jeff Orlowski. United States of America: Exposure Labs.</li>
+<li>TOP500, 2020. <em>JUNE 2020.</em> [Online] Available at: <a href="https://www.top500.org/lists/top500/2020/06/" rel="noopener" target="_blank">https://www.top500.org/lists/top500/2020/06/</a> [Accessed 29 December 2020].</li>
+<li>Topol, E. J., 2019. High-performance medicine: the convergence of human and artificial intelligence. <em>Nature Medicine,</em> Volume 25, pp. 44-56.</li>
+<li>Turing, A., 1936. <em>On Computable Numbers, With an application to The EntScheidungsproblem.</em> s.l.:s.n.</li>
+<li>Wallis, J., 2015. <em>How political engagement on social media can drive people to extremes.</em> [Online] Available at: <a href="https://theconversation.com/how-political-engagement-on-social-media-can-drive-people-to-extremes-44903" rel="noopener" target="_blank">https://theconversation.com/how-political-engagement-on-social-media-can-drive-people-to-extremes-44903</a> [Accessed 24 February 2021].</li>
+<li>Welsh, T., 2015. <em>It feels instantaneous, but how long does it really take to think a thought?.</em> [Online] Available at: <a href="https://theconversation.com/it-feels-instantaneous-but-how-long-does-it-really-take-to-think-a-thought-42392" rel="noopener" target="_blank">https://theconversation.com/it-feels-instantaneous-but-how-long-does-it-really-take-to-think-a-thought-42392</a> [Accessed 28 December 2020].</li>
+<li>World Health Organisation, n.d. <em>Global Health Observatory: Road Safety.</em> [Online] Available at: <a href="https://www.who.int/data/gho/data/themes/road-safety" rel="noopener" target="_blank">https://www.who.int/data/gho/data/themes/road-safety</a> [Accessed 31 December 2020].</li>
+<li>Wright, C. S., 2020. <em>Decentralized Autonomous Corporations.</em> s.l., Springer.</li>
+<li>Yahoo Finance, 2020. <em>Yahoo Finance Tesla.</em> [Online] Available at: <a href="https://finance.yahoo.com/quote/TSLA/" rel="noopener" target="_blank">https://finance.yahoo.com/quote/TSLA/</a> [Accessed 31 December 2020].</li>
+<li>Yudkowsky, E., 2004. <em>Coherent Extrapolated Volition,</em> San Francisco: Machine Intelligence Research Institute.</li>
+<li>Yudkowsky, E., 2011. <em>Complex Value Systems in Friendly AI,</em> s.l.: Springer.</li>
+<li>Zoetekouw, K., 2019. <em>Koen Zoetekouw Undergraduate Dissertation.</em> [Online] Available at: <a href="http://essay.utwente.nl/78500/1/Zoetekouw_BA_BMS.pdf" rel="noopener" target="_blank">http://essay.utwente.nl/78500/1/Zoetekouw_BA_BMS.pdf</a> [Accessed 19 February 2021].</li>
+</ul>
+</section>
+<div class="article-foot">
+<a href="/">← All writing</a>
+<a href="mailto:jgacton@protonmail.com">Tell me I'm wrong</a>
+</div>
+</article>
+</main>
+</div>
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn  = document.getElementById('theme-toggle');
+  var icon = document.getElementById('theme-icon');
+  var name = document.getElementById('theme-name');
+
+  function paint() {
+    var dark = root.getAttribute('data-theme') === 'dark';
+    icon.textContent = dark ? '◑' : '◐';
+    name.textContent = dark ? 'Dark' : 'Light';
+  }
+  paint();
+
+  btn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    paint();
+  });
+})();
+</script>
+</body>
+</html>
