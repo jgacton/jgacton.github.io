@@ -4,13 +4,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
-<title>Would artificial superintelligence benefit humanity?</title>
+<title>Will machine superintelligence benefit humanity? — Joshua Acton</title>
 <meta content="An extended essay on the risks and benefits of artificial superintelligence, written in 2021 and republished with a retrospective note." name="description"/>
 <link href="/images/favicon.png" rel="icon" type="image/png"/>
-<meta content="Would artificial superintelligence benefit humanity?" property="og:title"/>
+<meta content="Will machine superintelligence benefit humanity?" property="og:title"/>
 <meta content="An extended essay written in 2021, republished with a note on what it got wrong." property="og:description"/>
 <meta content="article" property="og:type"/>
-<meta content="2021-06-01" property="article:published_time"/>
+<meta content="https://jgacton.github.io/writing/superintelligence.html" property="og:url"/>
+<meta content="2021-05-01" property="article:published_time"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Inter:wght@400;450;500;600&amp;display=swap" rel="stylesheet"/>
@@ -308,6 +309,15 @@ a { color: inherit; text-decoration: none; }
 /* Let a dense diagram break the text measure a little */
 .body figure.wide { width: calc(100% + 120px); margin-left: -60px; }
 
+/* Theme-specific figure variants. Only one is displayed at a time; the
+   hidden one is lazy, so the browser doesn't fetch it until you switch. */
+.body figure img.fig-dark { display: none; }
+:root[data-theme='dark'] .body figure img.fig-light { display: none; }
+:root[data-theme='dark'] .body figure img.fig-dark {
+  display: block;
+  background: transparent;   /* artwork is already dark */
+}
+
 /* ── Tables ── */
 .table-wrap {
   margin: 32px 0;
@@ -574,11 +584,11 @@ a { color: inherit; text-decoration: none; }
 </a>
 <a class="nav-item" href="/#projects">
 <span class="nav-item-title">Projects</span>
-<span class="nav-item-desc">Things I've built</span>
+<span class="nav-item-desc">Things I’ve built</span>
 </a>
 <a class="nav-item" href="/#now">
 <span class="nav-item-title">Now</span>
-<span class="nav-item-desc">What I'm up to</span>
+<span class="nav-item-desc">What I’m up to</span>
 </a>
 </nav>
 <nav aria-label="Elsewhere" class="nav-group nav-external">
@@ -616,11 +626,11 @@ a { color: inherit; text-decoration: none; }
 </header>
 <aside class="retro">
 <span class="retro-label">Note, August 2026</span>
-<p>I wrote this in 2020-21, for an A-Level Extended Project Qualification. ChatGPT was first released to the public in November 2022. I've republished it as written, without corrections.</p>
+<p>I wrote this in 2020-21, for an A-Level Extended Project Qualification. ChatGPT was first released to the public in November 2022. I’ve republished it as written, without corrections.</p>
 <p>Some of it holds up better than I expected. For example, that the AI race would be dipolar at the international level, that there would be a focus on using AI to develop better AI, and that AI development would be spearheaded by those with a profit motive.</p> 
-<p>Other parts don't. Although I mentioned GPT-3, I did not anticipate the speed of progress in large language models, the extent to which they would become ubiquitous, or the applicability of the transformer/LLM architecture to problems other than text generation.</p>
+<p>Other parts don’t. Although I mentioned GPT-3, I did not anticipate the speed of progress in large language models, the extent to which they would become ubiquitous, or the applicability of the transformer/LLM architecture to problems other than text generation.</p>
 <p>Five years on, I am both amazed by the capabilities of the tools available to me as a consumer, and uneasy about the rapid pace of change.</p>
-<p>There are many more questions that I have now, that I could not have conceived when I wrote the original essay. Is next-token prediction enough for AGI? If so can that architecture extend to ASI? Is it possible to make a generative model "provably safe"?</p>
+<p>There are many more questions that I have now, that I could not have conceived when I wrote the original essay. Is next-token prediction enough for AGI? If so can that architecture extend to ASI? Is it possible to make a generative model “provably safe”?</p>
 <p>I hope that in the coming years I will have the chance to explore these questions for myself.</p>
 </aside>
 <nav aria-label="Contents" class="toc">
@@ -637,7 +647,7 @@ a { color: inherit; text-decoration: none; }
 <ol>
 <li><a href="#what-is-superintelligence">What is superintelligence?</a></li>
 <li><a href="#existential-risk">Existential risk</a></li>
-<li><a href="#humanity-s-cosmic-endowment">Humanity's cosmic endowment</a></li>
+<li><a href="#humanity-s-cosmic-endowment">Humanity’s cosmic endowment</a></li>
 </ol>
 </li>
 <li><a href="#conclusions">Conclusions</a></li>
@@ -679,7 +689,7 @@ a { color: inherit; text-decoration: none; }
 <p>The agent is a continuous process over time and contains an ‘agent function’ which maps a given percept to a given action.<a class="fn-ref" href="#fn19" id="fnref19">[19]</a> There are many ways to program an agent function to decide what action is correct for a given percept, but one common approach is to use a utility function. Somethings utility is essentially its value, as determined by some pre-set criteria. As explained by AI pioneer Stuart Russel: “Given a purpose defined by a utility function, the machine aims to produce behaviour that maximises its expected utility averaged over the possible outcomes weighted by their probabilities”. Essentially this means that the AI aims to choose actions which generates the highest probability of increasing its utility.</p>
 <p>Using this approach, contemporary AI techniques have yielded some incredible results, albeit in narrow fields. Google and DeepMind’s Game AIs have mastered the games of Chess, Shogi and Go.<a class="fn-ref" href="#fn20" id="fnref20">[20]</a> The GPT-3 natural language model, also by DeepMind can write poetry and news articles which easily pass off as penned by a human hand.<a class="fn-ref" href="#fn21" id="fnref21">[21]</a> The DeepMind Game AI ‘MuZero’ is of particular note, as not only has it mastered Chess, Shogi and Go like its predecessors but it has also learned to play and master Atari videogames such as Pac Man, without being programmed with the rules beforehand. This represents an incredible advancement in AI being able to deal with significant logical uncertainty. Furthermore, AlphaFold, another DeepMind project has made significant headway into the protein folding problem. The challenge of accurately modelling the 3D structure of proteins has been a challenge in computational biology since the 1960s, and this advancement may have applications to research on several neurodegenerative diseases.<a class="fn-ref" href="#fn22" id="fnref22">[22]</a></p>
 <figure>
-<img alt="Chart comparing AlphaGo, AlphaGo Zero, AlphaZero and MuZero across the domains each masters and the prior knowledge each requires, showing knowledge requirements falling and domains widening across the four systems." class="" height="835" loading="lazy" src="./figures/fig-03-muzero.webp" width="838"/>
+<img alt="Chart comparing AlphaGo, AlphaGo Zero, AlphaZero and MuZero across the domains each masters and the prior knowledge each requires, showing knowledge requirements falling and domains widening across the four systems." class="fig-light" height="835" loading="lazy" src="./figures/fig-03-muzero.webp" width="838"/><img alt="" aria-hidden="true" class="fig-dark" height="835" loading="lazy" src="./figures/fig-03-muzero-dark.webp" width="838"/>
 <figcaption><span class="fig-num">Fig. 3</span>AlphaGo through MuZero: the domains mastered widen while the prior knowledge required falls away.<a class="fn-ref" href="#fn23" id="fnref23">[23]</a></figcaption>
 </figure>
 <p>The impact of modern AI is not all good, however. Shows like Netflix’s The Social Dilemma show how social media platforms use AI to monitor users, collect information about them and keep them addicted the platform while presenting them with as many advertisements as possible.<a class="fn-ref" href="#fn24" id="fnref24">[24]</a> These content selection algorithms are typically designed to maximise click-through, the probability that a user clicks on or interacts with the presented item. Instead of simply presenting the user with content it thinks the user will prefer, over time the algorithm learns to modify the preferences of the user.<a class="fn-ref" href="#fn25" id="fnref25">[25]</a> Because people are more likely to interact with content they either staunchly agree with or vehemently oppose, these algorithms have led to a proliferation of extremist content online and increasing political polarisation.<a class="fn-ref" href="#fn26" id="fnref26">[26]</a></p><aside aria-label="Notes for What is AI?" class="section-notes"><span class="section-notes-label">Notes</span><ol><li id="fn9"><span class="fn-num">9</span><span class="fn-body">(J. McCarthy, 1955) <a aria-label="Back to text" href="#fnref9">↩</a></span></li><li id="fn10"><span class="fn-num">10</span><span class="fn-body">(Gugerty, 2006) <a aria-label="Back to text" href="#fnref10">↩</a></span></li><li id="fn11"><span class="fn-num">11</span><span class="fn-body">(Gary Yang, 2006) <a aria-label="Back to text" href="#fnref11">↩</a></span></li><li id="fn12"><span class="fn-num">12</span><span class="fn-body">(Sviokla, 2008) <a aria-label="Back to text" href="#fnref12">↩</a></span></li><li id="fn13"><span class="fn-num">13</span><span class="fn-body">(Stuart Russel, 2010) <a aria-label="Back to text" href="#fnref13">↩</a></span></li><li id="fn14"><span class="fn-num">14</span><span class="fn-body">(Apple Inc., 2020) <a aria-label="Back to text" href="#fnref14">↩</a></span></li><li id="fn15"><span class="fn-num">15</span><span class="fn-body">(Jacques Bughin, 2018) <a aria-label="Back to text" href="#fnref15">↩</a></span></li><li id="fn16"><span class="fn-num">16</span><span class="fn-body">(Martin, 2019) <a aria-label="Back to text" href="#fnref16">↩</a></span></li><li id="fn17"><span class="fn-num">17</span><span class="fn-body">(Bostrom, 2017) <a aria-label="Back to text" href="#fnref17">↩</a></span></li><li id="fn18"><span class="fn-num">18</span><span class="fn-body">(Stuart Russel, 2010) <a aria-label="Back to text" href="#fnref18">↩</a></span></li><li id="fn19"><span class="fn-num">19</span><span class="fn-body">(Russel, 2020) <a aria-label="Back to text" href="#fnref19">↩</a></span></li><li id="fn20"><span class="fn-num">20</span><span class="fn-body">(David Silver, Thomas Hubert, Julian Schrittwiesser, 2017) <a aria-label="Back to text" href="#fnref20">↩</a></span></li><li id="fn21"><span class="fn-num">21</span><span class="fn-body">(Branwen, 2020) <a aria-label="Back to text" href="#fnref21">↩</a></span></li><li id="fn22"><span class="fn-num">22</span><span class="fn-body">(John Jumper, 2020) <a aria-label="Back to text" href="#fnref22">↩</a></span></li><li id="fn23"><span class="fn-num">23</span><span class="fn-body">(Schrittwieser, 2020) <a aria-label="Back to text" href="#fnref23">↩</a></span></li><li id="fn24"><span class="fn-num">24</span><span class="fn-body">(The Social Dilemna , 2020) <a aria-label="Back to text" href="#fnref24">↩</a></span></li><li id="fn25"><span class="fn-num">25</span><span class="fn-body">(Russel, 2020) <a aria-label="Back to text" href="#fnref25">↩</a></span></li><li id="fn26"><span class="fn-num">26</span><span class="fn-body">(Wallis, 2015) <a aria-label="Back to text" href="#fnref26">↩</a></span></li></ol></aside>
@@ -786,7 +796,7 @@ a { color: inherit; text-decoration: none; }
 </section>
 <div class="article-foot">
 <a href="/">← All writing</a>
-<a href="mailto:jgacton@protonmail.com">Tell me I'm wrong</a>
+<a href="mailto:jgacton@protonmail.com">Tell me I’m wrong</a>
 </div>
 </article>
 </main>
