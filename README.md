@@ -10,7 +10,7 @@ served. Hosted on GitHub Pages.
 
 ```
 index.html                     home: about, writing, projects, now
-writing/superintelligence.html essays, one file each
+writing/                       essays, one file each
 writing/figures/               figures, WebP
 images/                        avatar and favicon
 ```
